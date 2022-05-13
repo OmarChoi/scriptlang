@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from tkinter import *
 
 Turn = "red"
@@ -14,9 +15,8 @@ class Cell(Canvas):
 
     def clicked(self, event): 
         global Turn
-        if self.color == "white" and Turn != None:
-            self.color = Turn
-            self.setColor(self.color)
+        self.checkcol()
+        return
 
     def setColor(self, color):
         global Turn
@@ -27,6 +27,13 @@ class Cell(Canvas):
         if Turn != None:
             Turn = "red" if (Turn == "yellow") else "yellow"
         
+    def checkcol(self):
+        for i in range(5, -1, -1):
+            if cells[i][self.col].color  == "white" and Turn != None:
+                cells[i][self.col].color = Turn
+                cells[i][self.col].setColor(cells[i][self.col].color)
+                return
+
 #코멘트 변경, 종료
 def checkstatus(color):
     global Turn
@@ -73,7 +80,35 @@ def iswon(color):
 
 #새로 시작
 def restart():
-    pass
+    global window
+    global button
+    global cells
+    global Turn
+    
+    window.destroy()
+    cells.clear()
+    Turn = "red"
+    window = Tk() 
+    window.title("Connect Four") 
+
+    frame1 = Frame(window)
+    frame1.pack()
+
+    cells = []
+    for i in range(6):
+        cells.append([])
+        for j in range(7):       
+            cells[i].append(Cell(frame1, i, j, width = 20, height = 20))
+            cells[i][j].grid(row = i, column = j)
+
+    button = Button(window, text = "새로 시작", command= restart)
+    button["text"] = "새로 시작"
+    button["command"] = restart
+
+    button.pack()
+
+    window.mainloop()
+
 
 window = Tk() 
 window.title("Connect Four") 
@@ -85,10 +120,10 @@ cells = []
 for i in range(6):
     cells.append([])
     for j in range(7):       
-        cells[i].append(Cell(frame1, 0, 0, width = 20, height = 20))
+        cells[i].append(Cell(frame1, i, j, width = 20, height = 20))
         cells[i][j].grid(row = i, column = j)
 
-button = Button(window, text = "새로 시작")
+button = Button(window, text = "새로 시작", command= restart)
 button["text"] = "새로 시작"
 button["command"] = restart
 
