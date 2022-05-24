@@ -1,8 +1,12 @@
+from hashlib import new
 from msilib.schema import ListBox
 from tkinter import *
 import tkinter.ttk as ttk
 from tkinter import font
+from turtle import title
 from APIConnect import *
+from email.mime.text import MIMEText
+import tkintermapview
 
 g_Tk = Tk()
 g_Tk.title("경기도지역화폐가맹점정보")
@@ -14,16 +18,46 @@ INPUT_CMPNM_NM = None
 leftListBox = None
 rightListBox = None
 
-photo0 = PhotoImage(file = "Search.PNG")
+photo0 = PhotoImage(file = "Search.png")
 photo1 = PhotoImage(file = "Homepage.PNG")
 photo2 = PhotoImage(file = "Map.png")
 photo3 = PhotoImage(file = "Mail.png")
 
-def event_for_listbox(event): # 리스트 선택 시 내용 출력
-    global rightListBox
+def printmap():
+    global new
+    new = Toplevel()
 
-    selection = event.widget.curselection()
+    map_widget = tkintermapview.TkinterMapView(new, width=800, height=500, corner_radius=0)
+    map_widget.pack()
+
+    marker_1 = map_widget.set_address("경기도 성남시 수정구 위례광장로 27", marker=True)
+    print(marker_1.position, marker_1.text)
+    marker_1.set_text("위치")
+    map_widget.set_zoom(19)
+
+content = []
+
+def setsend(fromAddr , toAddr, msg):
+    import smtplib
+    s = smtplib.SMTP("smtp.gmail.com", 587)
+    s.starttls()
+
+    s.login('sgj9946@gmail.com', 'xahqeslixkobexmw')
+    s.sendmail(fromAddr , [toAddr], msg.as_string())
+    s.close()
+
+def sendMail():
+    global content
+    msg = MIMEText('\n'.join(content),_charset="utf8")
+    msg['Subject'] = "음식점 정보"
+    setsend('sgj9946@naver.com', 'varcqp@naver.com', msg)
+    content.clear()
+   
+def event_for_listbox(event): # 리스트 선택 시 내용 출력
+    global rightListBox, content
+
     temp = []
+    selection = event.widget.curselection()
     if selection:
         index = selection[0]
         data = event.widget.get(index)
@@ -32,7 +66,7 @@ def event_for_listbox(event): # 리스트 선택 시 내용 출력
         for i in range (0, 5):
             if temp[i] != "None":
                 rightListBox.insert(i, temp[i])
-        
+                content.append(temp[i])
 
 def InitScreen():
     fontTitle = font.Font(g_Tk, size = 18, weight='bold', family='바탕체')
@@ -43,7 +77,7 @@ def InitScreen():
 
     frameClassification = Frame(g_Tk, pady=20, bg='#96d3ff')
     frameClassification.pack(side="top",fill="x")
-    
+   
     frameName = Frame(g_Tk, pady=10, bg='#96d3ff')
     frameName.pack(side="top", fill="x")
 
@@ -57,21 +91,21 @@ def InitScreen():
     MainText.pack(anchor="center", fill="both")
 
     global SIGUN_NM_Combo
-    SIGUN_NM_List = ["가평군", "고양시", "과천시", "광명시", "광주시", "구리시", "군포시", "김포시", "남양주시", "동두천시", "부천시", "성남시", "수원시", "시흥시", "안산시", "안성시", "안양시", "양주시", "양평군", "여주시", "연천군", "오산시", "용인시", "의왕시", "의정부시", "이천시", "파주시", "평택시", "포천시", "하남시", "화성시"] 
+    SIGUN_NM_List = ["가평군", "고양시", "과천시", "광명시", "광주시", "구리시", "군포시", "김포시", "남양주시", "동두천시", "부천시", "성남시", "수원시", "시흥시", "안산시", "안성시", "안양시", "양주시", "양평군", "여주시", "연천군", "오산시", "용인시", "의왕시", "의정부시", "이천시", "파주시", "평택시", "포천시", "하남시", "화성시"]
     SIGUN_NM_Combo = ttk.Combobox(frameClassification, font=fontNormal, width = 10, height = 10, values=SIGUN_NM_List, state='readonly')
     SIGUN_NM_Combo.pack(side='left', padx=10, expand=True, fill='both')
     SIGUN_NM_Combo.set("시/군")
 
     global INDUTYPE_NM_Combo
-    INDUTYPE_NM_List = ['소매업', '음식점업', '개인서비스업', '슈퍼/마트', '보건업', '교육서비스업', '기타'] 
-    INDUTYPE_NM_Combo = ttk.Combobox(frameClassification, font=fontNormal, width = 10, height = 1, values=INDUTYPE_NM_List, state='readonly') 
+    INDUTYPE_NM_List = ['소매업', '음식점업', '개인서비스업', '슈퍼/마트', '보건업', '교육서비스업', '기타']
+    INDUTYPE_NM_Combo = ttk.Combobox(frameClassification, font=fontNormal, width = 10, height = 1, values=INDUTYPE_NM_List, state='readonly')
     INDUTYPE_NM_Combo.pack(side='right', padx=10, expand=True, fill='both')
     INDUTYPE_NM_Combo.set("업종분류")
 
     global INPUT_CMPNM_NM
     INPUT_CMPNM_NM = Entry(frameName, font=fontNormal, width=26,borderwidth=12, relief='ridge')
     INPUT_CMPNM_NM.pack(side="left", padx=10, expand=True, fill='both')
-    
+   
     global photo0
     SearchButton = Button(frameName, image=photo0, command=onSearch)
     SearchButton.pack(side="right", padx=10, expand=True, fill='y')
@@ -85,17 +119,17 @@ def InitScreen():
     rightListBox = Listbox(frameList, font = fontNormal, width=10, height=15, borderwidth= 12, relief= 'ridge')
     rightListBox.pack(side='right', anchor='n', expand=True, fill="x")
 
-    global photo1, photo2, photo3
+    global photo1, photo2, photo3, msg
 
     HomepageLink = Button(frameETC, image = photo1, command=OpenPage)
     HomepageLink.pack(side="left", padx=10, fill="y")
 
-    MapButton = Button(frameETC, image = photo2)
+    MapButton = Button(frameETC, image = photo2, command=printmap)
     MapButton.pack(side="right", padx=10, fill="y")
 
-    MapButton = Button(frameETC, image = photo3)
-    MapButton.pack(side="right", padx=10, fill="y")
-    
+    MailButton = Button(frameETC, image = photo3, command=sendMail)
+    MailButton.pack(side="right", padx=10, fill="y")
+       
 def OpenPage():
     import webbrowser
     url = "https://www.gmoney.or.kr/base/main/view"
@@ -123,7 +157,7 @@ def onSearch():
                 if str(i['local']) == SIGUN_NM_Combo.get():
                     _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'])
                     leftListBox.insert(num - 1, _text)
-                    
+                   
 getData()
 InitScreen()
 g_Tk.mainloop()
