@@ -17,6 +17,7 @@ INDUTYPE_NM_Combo = None
 INPUT_CMPNM_NM = None
 leftListBox = None
 rightListBox = None
+currentData = {}
 
 photo0 = PhotoImage(file = "Search.png")
 photo1 = PhotoImage(file = "Homepage.PNG")
@@ -25,15 +26,18 @@ photo3 = PhotoImage(file = "Mail.png")
 
 def printmap():
     global new
-    new = Toplevel()
+    global currentData
 
-    map_widget = tkintermapview.TkinterMapView(new, width=800, height=500, corner_radius=0)
-    map_widget.pack()
+    if currentData != {}:
+        new = Toplevel()
 
-    marker_1 = map_widget.set_address("경기도 성남시 수정구 위례광장로 27", marker=True)
-    print(marker_1.position, marker_1.text)
-    marker_1.set_text("위치")
-    map_widget.set_zoom(19)
+        map_widget = tkintermapview.TkinterMapView(new, width=800, height=500, corner_radius=0)
+        map_widget.pack()
+
+        marker_1 = map_widget.set_address(currentData['address'], marker=True)
+        marker_1.set_text(currentData['Name'])
+        map_widget.set_zoom(19)
+
 
 content = []
 
@@ -54,10 +58,11 @@ def sendMail():
     content.clear()
    
 def event_for_listbox(event): # 리스트 선택 시 내용 출력
-    global rightListBox, content
+    global rightListBox, content, currentData
 
     temp = []
     selection = event.widget.curselection()
+    currentData = {}
     if selection:
         index = selection[0]
         data = event.widget.get(index)
@@ -67,6 +72,7 @@ def event_for_listbox(event): # 리스트 선택 시 내용 출력
             if temp[i] != "None":
                 rightListBox.insert(i, temp[i])
                 content.append(temp[i])
+        currentData = {'Name' : str(temp[0]), 'address' : str(temp[3])}
 
 def InitScreen():
     fontTitle = font.Font(g_Tk, size = 18, weight='bold', family='바탕체')
@@ -136,28 +142,27 @@ def OpenPage():
     webbrowser.open(url)
 
 def onSearch():
-    global SIGUN_NM_Combo
-    global INDUTYPE_NM_Combo
-    global INPUT_CMPNM_NM
-    global leftListBox
-    global ListMaket
+    global SIGUN_NM_Combo, INDUTYPE_NM_Combo, INPUT_CMPNM_NM, leftListBox, rightListBox, ListMaket, currentData
     leftListBox.delete(0,leftListBox.size())
+    rightListBox.delete(0,rightListBox.size())
+    currentData = {}
+    num = 1
+    getData(SIGUN_NM_Combo.get())
     num = 1
     for i in ListMaket:
         if INPUT_CMPNM_NM.get() != '':
             if str(i['Name']) == INPUT_CMPNM_NM.get():
-                _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'])
+                _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'] )
                 leftListBox.insert(num - 1, _text)
         else:
-            if str(INDUTYPE_NM_Combo.get() != "기타"):
+            if str(INDUTYPE_NM_Combo.get()) != "기타" and str(INDUTYPE_NM_Combo.get()) != '업종분류':
                 if str(i['category']) == INDUTYPE_NM_Combo.get() and str(i['local']) == SIGUN_NM_Combo.get():
-                    _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'])
+                    _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'] )
                     leftListBox.insert(num - 1, _text)
             else:
                 if str(i['local']) == SIGUN_NM_Combo.get():
-                    _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'])
+                    _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'] )
                     leftListBox.insert(num - 1, _text)
-                   
-getData()
+              
 InitScreen()
 g_Tk.mainloop()
