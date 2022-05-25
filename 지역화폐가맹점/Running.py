@@ -7,6 +7,7 @@ from turtle import title
 from APIConnect import *
 from email.mime.text import MIMEText
 import tkintermapview
+from tkinter import messagebox
 
 g_Tk = Tk()
 g_Tk.title("경기도지역화폐가맹점정보")
@@ -18,6 +19,7 @@ INPUT_CMPNM_NM = None
 leftListBox = None
 rightListBox = None
 currentData = {}
+alreadyCallRegion = []
 
 photo0 = PhotoImage(file = "Search.png")
 photo1 = PhotoImage(file = "Homepage.PNG")
@@ -142,27 +144,26 @@ def OpenPage():
     webbrowser.open(url)
 
 def onSearch():
-    global SIGUN_NM_Combo, INDUTYPE_NM_Combo, INPUT_CMPNM_NM, leftListBox, rightListBox, ListMaket, currentData
+    global SIGUN_NM_Combo, INDUTYPE_NM_Combo, INPUT_CMPNM_NM, leftListBox, rightListBox, ListMaket, currentData, alreadyCallRegion
     leftListBox.delete(0,leftListBox.size())
     rightListBox.delete(0,rightListBox.size())
     currentData = {}
-    num = 1
+    num = 0
     getData(SIGUN_NM_Combo.get())
-    num = 1
     for i in ListMaket:
         if INPUT_CMPNM_NM.get() != '':
-            if str(i['Name']) == INPUT_CMPNM_NM.get():
+            if INPUT_CMPNM_NM.get() in str(i['Name']):
                 _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'] )
-                leftListBox.insert(num - 1, _text)
+                leftListBox.insert(num, _text)
         else:
             if str(INDUTYPE_NM_Combo.get()) != "기타" and str(INDUTYPE_NM_Combo.get()) != '업종분류':
-                if str(i['category']) == INDUTYPE_NM_Combo.get() and str(i['local']) == SIGUN_NM_Combo.get():
+                if INDUTYPE_NM_Combo.get() in str(i['category']):
                     _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'] )
-                    leftListBox.insert(num - 1, _text)
+                    leftListBox.insert(num, _text)
             else:
-                if str(i['local']) == SIGUN_NM_Combo.get():
-                    _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'] )
-                    leftListBox.insert(num - 1, _text)
-              
+                _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'] )
+                leftListBox.insert(num, _text)          
+    ListMaket.clear()
+
 InitScreen()
 g_Tk.mainloop()
