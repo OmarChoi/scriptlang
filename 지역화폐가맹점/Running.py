@@ -45,11 +45,14 @@ def printmap():
 def setmail():
     global new_m, INPUT_MAIL_WIDJET
     new_m = Toplevel()
+    new_m.geometry("200x100+750+450")
 
-    INPUT_MAIL_WIDJET = Text(new_m, width=25,height=1)
-    INPUT_MAIL_WIDJET.pack(side="left", padx=10, expand=True, fill='x')
+    INPUT_MAIL_Text = Label(new_m,text='수신하실 메일 주소를 입력하세요', width=10,height=2)
+    INPUT_MAIL_Text.pack(side="top", padx=5, expand=True, fill='x')
+    INPUT_MAIL_WIDJET = Text(new_m, width=10,height=2)
+    INPUT_MAIL_WIDJET.pack(side="top", padx=5, expand=True, fill='x')
 
-    SendButton = Button(new_m, image=photo0, command=sendMail)
+    SendButton = Button(new_m, text= '메일 전송', command=sendMail)
     SendButton.pack(side="right", padx=10, expand=True)
 
 def setsend(fromAddr , toAddr, msg):
@@ -67,7 +70,7 @@ def sendMail():
     receiver = INPUT_MAIL_WIDJET.get("1.0", "end")
 
     msg = MIMEText('\n'.join(content),_charset="utf8")
-    msg['Subject'] = "음식점 정보"
+    msg['Subject'] = "가맹점 정보"
     setsend('sgj9946@naver.com', receiver, msg)
     content.clear()
     INPUT_MAIL_WIDJET = None
@@ -83,6 +86,7 @@ def event_for_listbox(event): # 리스트 선택 시 내용 출력
         index = selection[0]
         data = event.widget.get(index)
         temp = data.split("/")
+        content.clear()
         rightListBox.delete(0,rightListBox.size())
         for i in range (0, 5):
             if temp[i] != "None":
@@ -119,8 +123,8 @@ def InitScreen():
     SIGUN_NM_Combo.set("시/군")
 
     global INDUTYPE_NM_Combo
-    INDUTYPE_NM_List = ['소매업', '음식점업', '개인서비스업', '슈퍼/마트', '보건업', '교육서비스업', '기타']
-    INDUTYPE_NM_Combo = ttk.Combobox(frameClassification, font=fontNormal, width = 10, height = 1, values=INDUTYPE_NM_List, state='readonly')
+    INDUTYPE_NM_List = ['음식', '골프', '병원', '미용', '레저', '학원', '헬스', '주유소', '가스충전소', '기타']
+    INDUTYPE_NM_Combo = ttk.Combobox(frameClassification, font=fontNormal, width = 10, height = 10, values=INDUTYPE_NM_List, state='readonly')
     INDUTYPE_NM_Combo.pack(side='right', padx=10, expand=True, fill='both')
     INDUTYPE_NM_Combo.set("업종분류")
 
@@ -163,6 +167,9 @@ def onSearch():
     rightListBox.delete(0,rightListBox.size())
     currentData = {}
     num = 0
+    if SIGUN_NM_Combo.get() == "시/군":
+        messagebox.showinfo(title='알림', message='지역을 선택해주세요.')
+        return
     getData(SIGUN_NM_Combo.get())
     for i in ListMaket:
         if INPUT_CMPNM_NM.get() != '':
