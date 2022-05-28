@@ -16,10 +16,12 @@ g_Tk.geometry("600x700+450+100") # {width}x{height}+-{xpos}+-{ypos}
 SIGUN_NM_Combo = None
 INDUTYPE_NM_Combo = None
 INPUT_CMPNM_NM = None
+INPUT_MAIL_WIDJET = None
 leftListBox = None
 rightListBox = None
 currentData = {}
 alreadyCallRegion = []
+content = []
 
 photo0 = PhotoImage(file = "Search.png")
 photo1 = PhotoImage(file = "Homepage.PNG")
@@ -40,8 +42,15 @@ def printmap():
         marker_1.set_text(currentData['Name'])
         map_widget.set_zoom(19)
 
+def setmail():
+    global new_m, INPUT_MAIL_WIDJET
+    new_m = Toplevel()
 
-content = []
+    INPUT_MAIL_WIDJET = Text(new_m, width=25,height=1)
+    INPUT_MAIL_WIDJET.pack(side="left", padx=10, expand=True, fill='x')
+
+    SendButton = Button(new_m, image=photo0, command=sendMail)
+    SendButton.pack(side="right", padx=10, expand=True)
 
 def setsend(fromAddr , toAddr, msg):
     import smtplib
@@ -53,11 +62,16 @@ def setsend(fromAddr , toAddr, msg):
     s.close()
 
 def sendMail():
-    global content
+    global content, INPUT_MAIL_WIDJET, new_m
+
+    receiver = INPUT_MAIL_WIDJET.get("1.0", "end")
+
     msg = MIMEText('\n'.join(content),_charset="utf8")
     msg['Subject'] = "음식점 정보"
-    setsend('sgj9946@naver.com', 'varcqp@naver.com', msg)
+    setsend('sgj9946@naver.com', receiver, msg)
     content.clear()
+    INPUT_MAIL_WIDJET = None
+    new_m.destroy()
    
 def event_for_listbox(event): # 리스트 선택 시 내용 출력
     global rightListBox, content, currentData
@@ -127,7 +141,7 @@ def InitScreen():
     rightListBox = Listbox(frameList, font = fontNormal, width=10, height=15, borderwidth= 12, relief= 'ridge')
     rightListBox.pack(side='right', anchor='n', expand=True, fill="x")
 
-    global photo1, photo2, photo3, msg
+    global photo1, photo2, photo3
 
     HomepageLink = Button(frameETC, image = photo1, command=OpenPage)
     HomepageLink.pack(side="left", padx=10, fill="y")
@@ -135,7 +149,7 @@ def InitScreen():
     MapButton = Button(frameETC, image = photo2, command=printmap)
     MapButton.pack(side="right", padx=10, fill="y")
 
-    MailButton = Button(frameETC, image = photo3, command=sendMail)
+    MailButton = Button(frameETC, image = photo3, command=setmail)
     MailButton.pack(side="right", padx=10, fill="y")
        
 def OpenPage():
