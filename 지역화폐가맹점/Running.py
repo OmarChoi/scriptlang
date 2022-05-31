@@ -137,9 +137,12 @@ def InitScreen():
     SearchButton.pack(side="right", padx=10, expand=True, fill='y')
 
     global leftListBox
-    leftListBox = Listbox(frameList, selectmode='extended', font = fontNormal, width=20, height=15, borderwidth= 12, relief= 'ridge')
+    LScrollbar = Scrollbar(frameList)
+    leftListBox = Listbox(frameList, selectmode='extended', font = fontNormal, width=20, height=15, borderwidth= 12, relief= 'ridge', yscrollcommand=LScrollbar.set)
     leftListBox.bind('<<ListboxSelect>>', event_for_listbox)
     leftListBox.pack(side='left', anchor='n')
+    LScrollbar.pack(side='left', fill='y')
+    LScrollbar.config(command=leftListBox.yview)
 
     global rightListBox
     rightListBox = Listbox(frameList, font = fontNormal, width=10, height=15, borderwidth= 12, relief= 'ridge')
