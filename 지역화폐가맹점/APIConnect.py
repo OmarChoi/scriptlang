@@ -34,7 +34,8 @@ def SaveData(strXml):
             REFINE_LOTNO_ADDR = row.find("REFINE_LOTNO_ADDR")
             REFINE_ROADNM_ADDR = row.find("REFINE_ROADNM_ADDR")
             SIGUN_NM = row.find("SIGUN_NM")
-            ListMaket.append({'Name' : CMPNM_NM.text, 'category' : INDUTYPE_NM.text, 'address_01' : REFINE_LOTNO_ADDR.text, 'address_02' : REFINE_ROADNM_ADDR.text, 'local' : SIGUN_NM.text})
+            ListMaket.append({'Name' : CMPNM_NM.text + '                                                         '\
+                , 'category' : INDUTYPE_NM.text, 'address_01' : REFINE_LOTNO_ADDR.text, 'address_02' : REFINE_ROADNM_ADDR.text, 'local' : SIGUN_NM.text})
 
 def getData(Name): 
     global conn, checkEnd

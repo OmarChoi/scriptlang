@@ -23,10 +23,10 @@ currentData = {}
 alreadyCallRegion = []
 content = []
 
-photo0 = PhotoImage(file = "Search.png")
-photo1 = PhotoImage(file = "Homepage.PNG")
-photo2 = PhotoImage(file = "Map.png")
-photo3 = PhotoImage(file = "Mail.png")
+photo0 = PhotoImage(file = "image/Search.png")
+photo1 = PhotoImage(file = "image/Homepage.PNG")
+photo2 = PhotoImage(file = "image/Map.png")
+photo3 = PhotoImage(file = "image/Mail.png")
 
 def printmap():
     global new
@@ -81,8 +81,8 @@ def event_for_listbox(event): # 리스트 선택 시 내용 출력
 
     temp = []
     selection = event.widget.curselection()
-    currentData = {}
     if selection:
+        currentData = {}
         index = selection[0]
         data = event.widget.get(index)
         temp = data.split("/")
@@ -95,7 +95,7 @@ def event_for_listbox(event): # 리스트 선택 시 내용 출력
         currentData = {'Name' : str(temp[0]), 'address' : str(temp[3])}
 
 def InitScreen():
-    fontTitle = font.Font(g_Tk, size = 18, weight='bold', family='바탕체')
+    fontTitle = font.Font(g_Tk, size = 20, weight='bold', family='궁서체')
     fontNormal = font.Font(g_Tk, size= 15, weight='bold')
 
     frameTitle = Frame(g_Tk, padx=10, pady=10,bg='#1fffbf')
@@ -137,7 +137,7 @@ def InitScreen():
     SearchButton.pack(side="right", padx=10, expand=True, fill='y')
 
     global leftListBox
-    leftListBox = Listbox(frameList, selectmode='extended', font = fontNormal, width=10, height=15, borderwidth= 12, relief= 'ridge')
+    leftListBox = Listbox(frameList, selectmode='extended', font = fontNormal, width=20, height=15, borderwidth= 12, relief= 'ridge')
     leftListBox.bind('<<ListboxSelect>>', event_for_listbox)
     leftListBox.pack(side='left', anchor='n')
 
@@ -167,15 +167,23 @@ def onSearch():
     rightListBox.delete(0,rightListBox.size())
     currentData = {}
     num = 0
+    count = 0
     if SIGUN_NM_Combo.get() == "시/군":
         messagebox.showinfo(title='알림', message='지역을 선택해주세요.')
         return
-    getData(SIGUN_NM_Combo.get())
+    if not ListMaket:
+        getData(SIGUN_NM_Combo.get())
+    else:
+        if SIGUN_NM_Combo.get() != ListMaket[0]['local']:
+            ListMaket.clear()
+            getData(SIGUN_NM_Combo.get())
+            
     for i in ListMaket:
         if INPUT_CMPNM_NM.get() != '':
             if INPUT_CMPNM_NM.get() in str(i['Name']):
                 _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'] )
                 leftListBox.insert(num, _text)
+                
         else:
             if str(INDUTYPE_NM_Combo.get()) != "기타" and str(INDUTYPE_NM_Combo.get()) != '업종분류':
                 if INDUTYPE_NM_Combo.get() in str(i['category']):
@@ -183,8 +191,7 @@ def onSearch():
                     leftListBox.insert(num, _text)
             else:
                 _text = str(i['Name']) + "/" + str(i['local']) + "/" + str(i['category']) + "/" + str(i['address_01']) + "/" + str(i['address_02'] )
-                leftListBox.insert(num, _text)          
-    ListMaket.clear()
+                leftListBox.insert(num, _text)         
 
 InitScreen()
 g_Tk.mainloop()
