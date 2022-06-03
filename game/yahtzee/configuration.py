@@ -49,6 +49,7 @@ class Configuration:
                     Score = 25
         elif row == 11:
             temp = list(count.keys())
+            temp.sort()
             tempstr = ''
             for i in temp:
                 tempstr += str(i)

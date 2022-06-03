@@ -1,3 +1,5 @@
+from dataclasses import field
+from pdb import Restart
 from tkinter import *
 from tkinter import font
 from turtle import bgcolor
@@ -125,6 +127,24 @@ class YahtzeeBoard:
             self.diceButtons[row]['state'] = 'disabled'
             self.diceButtons[row]['bg'] = 'light gray'
 
+    def restart(self, winner):
+        MsgBox = messagebox.showinfo(title='알림', message='{}이(가) 승리하였습니다.'.format(winner.toString()))
+        if MsgBox == 'ok':
+            for j in range(self.numPlayers):
+                if j == 0:
+                    for i in range(0, 6):
+                        self.fields[i][j]['state'] = 'normal'
+                        self.fields[i][j]['bg'] = 'white'
+                    for i in range(8, 15):
+                        self.fields[i][j]['state'] = 'normal'
+                        self.fields[i][j]['bg'] = 'white'
+                        
+                for i in range(0, 17):
+                    self.fields[i][j]['text'] = ''
+
+                self.players[j].reset()
+                        
+
     # 카레고리 버튼 눌렀을 때의 처리.
     #   row: 0~5, 8~14
     def categoryListener(self, row):
@@ -191,16 +211,19 @@ class YahtzeeBoard:
         # 라운드 증가 시키기.
         if self.player == 0:
             self.round += 1
-
+        
         # 게임이 종료되었는지 검사 (13 round의 마지막 플레이어일 때) 
         # -> 이긴 사람을 알리고 새 게임 시작.
         max = ( 0, 0 )
-        print(self.round)
-        if self.round == 13:
-            for i in self.players:
-                if max[1] < self.fields[self.TOTAL][self.player]['text']:
-                    max = ( self.players[self.player] , self.fields[self.TOTAL][self.player]['text'])
-            messagebox.showinfo(title='알림', message='{}이(가) 승리하였습니다.'.format(max[0].toString()))
+        for i in range(self.numPlayers):
+            if self.fields[self.TOTAL][i]['text'] == '':
+                max = ( 0, 0 )
+                break
+            if max[1] < self.fields[self.TOTAL][i]['text']:
+                max = ( self.players[i] , self.fields[self.TOTAL][i]['text'])
+        if max[0] != 0:
+            self.restart(max[0])
+
 
         # 다시 Roll Dice 버튼과 diceButtons 버튼들을 활성화.
         self.rollDice.configure(text="Roll Dice")
