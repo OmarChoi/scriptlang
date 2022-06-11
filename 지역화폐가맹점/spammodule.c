@@ -1,24 +1,30 @@
 #include <python.h>
-#include <string.h>
 
-static PyObject* spam_strlen(PyObject* self, PyObject* args) {
-	char* str;
-	int len;
-	if (!PyArg_ParseTuple(args, "s", &str))
+static PyObject *
+
+spam_count(PyObject* self, PyObject* n)
+{
+	char* str1;
+
+	if (!PyArg_ParseTuple(n, "s", &str1))
 		return NULL;
-	len = strlen(str); 
-	return Py_BuildValue("i", len);
+	char *str2 = "were searched";
+
+	strcat(str1, str2);
+
+	return Py_BuildValue("s", str1);
 }
 
 static PyMethodDef SpamMethods[] = {
-	{"strlen", spam_strlen, METH_VARARGS, "count a string length."},
+
+	{"count", spam_count, METH_VARARGS, "count"},
 	{NULL, NULL, 0, NULL}
 };
 
 static PyModuleDef spammodule = { 
 	PyModuleDef_HEAD_INIT, 
 	"spam", 
-	"It is a test module.", 
+	"It is a test module.",
 	-1, SpamMethods 
 };
 
