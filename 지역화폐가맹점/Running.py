@@ -1,18 +1,12 @@
 from tkinter import *
 from tkinter import font
 from tkinter import messagebox
-<<<<<<< HEAD
 from turtle import left
-=======
-from turtle import right
->>>>>>> 44f0d90bf513e4b304b7e6803369e35e0f06af8d
 import tkintermapview
 import tkinter.ttk as ttk
 import spam
 from email.mime.text import MIMEText
 from APIConnect import *
-import spam
-
 
 g_Tk = Tk()
 g_Tk.title("경기도지역화폐가맹점정보")
@@ -54,7 +48,6 @@ def printmap():
     global currentData
 
     if currentData != {}:
-<<<<<<< HEAD
         try:
             new = Toplevel()
             tempaddress = currentData["address"].split("(")
@@ -71,19 +64,6 @@ def printmap():
     else:
         messagebox.showinfo(title='알림', message='출력할 데이터가 존재하지 않습니다.')
        
-=======
-        new = Toplevel()
-
-        map_widget = tkintermapview.TkinterMapView(new, width=800, height=500, corner_radius=0)
-        map_widget.pack()
-
-        marker_1 = map_widget.set_address(currentData['address'], marker=True)
-        marker_1.set_text(currentData['Name'])
-        map_widget.set_zoom(19)
-    else:
-        messagebox.showinfo(title='잘못된 명령', message='주소 정보가 존재하지 않습니다.')
-
->>>>>>> 44f0d90bf513e4b304b7e6803369e35e0f06af8d
 def setmail():
     global new_m, INPUT_MAIL_WIDJET, rightListBox
 
@@ -132,15 +112,9 @@ def event_for_listbox(event):
         currentData = {}
         index = selection[0]
         data = event.widget.get(index)
-<<<<<<< HEAD
         temp = data.split("|")
         if len(temp) == 1:
             return
-=======
-        temp = data.split("/")
-        if len(temp) == 1:
-            return     
->>>>>>> 44f0d90bf513e4b304b7e6803369e35e0f06af8d
         content.clear()
         rightListBox.delete(0,rightListBox.size())
         for i in range (0, 5):
@@ -234,35 +208,26 @@ def onSearch():
     else:
         if SIGUN_NM_Combo.get() != ListMaket[0]['local']:
             ListMaket.clear()
-            getData(SIGUN_NM_Combo.get())  
-       
+            getData(SIGUN_NM_Combo.get())
+            
     for i in ListMaket:
         if INPUT_CMPNM_NM.get() != '':
             if INPUT_CMPNM_NM.get() in str(i['Name']):
                 _text = str(i['Name']) + "|" + str(i['local']) + "|"  + str(i['category']) + "|"  + str(i['address_01']) + "|"  + str(i['address_02'] )
                 leftListBox.insert(num, _text)
-                count = count + 1
                 
         else:
             if str(INDUTYPE_NM_Combo.get()) != "모두표시" and str(INDUTYPE_NM_Combo.get()) != '업종분류':
                 if str(i['category']) in classification[INDUTYPE_NM_Combo.get()] :
                     _text = str(i['Name']) + "|"  + str(i['local']) + "|"  + str(i['category']) + "|"  + str(i['address_01']) + "|"  + str(i['address_02'] )
                     leftListBox.insert(num, _text)
-                    count = count + 1
             else:
                 _text = str(i['Name']) + "|"  + str(i['local']) + "|"  + str(i['category']) + "|"  + str(i['address_01']) + "|"  + str(i['address_02'] )
                 leftListBox.insert(num, _text)
-<<<<<<< HEAD
     
     leftListBox.insert(0, "") 
     leftListBox.insert(0, spam.count(str(leftListBox.size() - 1))) 
-=======
-                count = count + 1
->>>>>>> 44f0d90bf513e4b304b7e6803369e35e0f06af8d
 
-    leftListBox.insert(0, "") 
-    leftListBox.insert(0, spam.count(str(count))) 
-   
     if INPUT_CMPNM_NM.get() != '':
         if leftListBox.size() == 2:
             messagebox.showinfo(title='알림', message='입력하신 업체는 지역화폐 사용이 불가능하거나\n해당 시/군에 존재하지 않습니다.')
