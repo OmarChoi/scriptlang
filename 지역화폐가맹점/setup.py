@@ -12,5 +12,5 @@ setup(
     packages=['image'],
     package_data = {'image': ['*.PNG']},
 
-    ext_modules=[module_spam]
+    ext_modules = module_spam
 )

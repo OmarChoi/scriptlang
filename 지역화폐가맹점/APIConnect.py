@@ -18,14 +18,13 @@ def SaveData(strXml):
     tree = ElementTree.fromstring(strXml)
     global ListMaket, checkEnd
     itemElements = tree.iter("row")
-    Head = tree.iter("head")
+    Head = tree.iter("RESULT")
     checkIN = 0
     
     for head in Head:
-        checkIN = 1
-        
-    if checkIN == 0:
-        checkEnd = True
+        if head.find("CODE").text != "INFO-000":
+            checkEnd = True
+            return
 
     for row in itemElements:
         if row.find("LIVE_YN").text == 'Y':
@@ -34,8 +33,11 @@ def SaveData(strXml):
             REFINE_LOTNO_ADDR = row.find("REFINE_LOTNO_ADDR")
             REFINE_ROADNM_ADDR = row.find("REFINE_ROADNM_ADDR")
             SIGUN_NM = row.find("SIGUN_NM")
-            ListMaket.append({'Name' : CMPNM_NM.text + '                                                         '\
-                , 'category' : INDUTYPE_NM.text, 'address_01' : REFINE_LOTNO_ADDR.text, 'address_02' : REFINE_ROADNM_ADDR.text, 'local' : SIGUN_NM.text})
+            if CMPNM_NM.text == None:
+                break
+            ListMaket.append({'Name' : CMPNM_NM.text + '                               '\
+                , 'category' : INDUTYPE_NM.text, 'address_01' : REFINE_ROADNM_ADDR.text \
+                    , 'address_02' : REFINE_LOTNO_ADDR.text, 'local' : SIGUN_NM.text})
 
 def getData(Name): 
     global conn, checkEnd

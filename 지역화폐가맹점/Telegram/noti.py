@@ -48,7 +48,7 @@ def SaveData(strXml, Name):
             REFINE_LOTNO_ADDR = row.find("REFINE_LOTNO_ADDR").text
             REFINE_ROADNM_ADDR = row.find("REFINE_ROADNM_ADDR").text
             SIGUN_NM = row.find("SIGUN_NM").text
-            if Name in CMPNM_NM:
+            if CMPNM_NM != None and Name in CMPNM_NM:
                 if CMPNM_NM != None:
                     list = '상호명 : ' + CMPNM_NM + '\n'
                 if SIGUN_NM != None:
